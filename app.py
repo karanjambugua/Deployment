@@ -14,7 +14,9 @@ import chardet
 # Ensure NLTK resources are available
 nltk.download('punkt')
 nltk.download('stopwords')
-
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('punkt_tab') 
 app = Flask(__name__)
 
 # Load the stopwords for text cleaning
