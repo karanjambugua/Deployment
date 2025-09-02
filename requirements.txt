@@ -8,3 +8,5 @@ scipy
 flask
 gunicorn
 pandas 
+nltk
+chardet
