@@ -10,3 +10,4 @@ gunicorn
 pandas 
 nltk
 chardet
+vaderSentiment

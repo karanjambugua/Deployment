@@ -10,8 +10,8 @@
 <body>
     <div class="navbar">
         <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="team.html">Meet The Team</a></li>
+                <li><a href="/">Home</a></li>
+                <li><a href="/team">Meet The Team</a></li>
           
         </ul>
     </div>
@@ -24,9 +24,25 @@
             Analyze
             <div id="loader" class="spinner"></div> <!-- Loading spinner -->
         </button>
-
+        <button id="refresh-btn" class="btn refresh-btn" onclick="refreshPage()">
+        <i class="fas fa-sync-alt"></i> Refresh
+    </button>
         <p id="result" class="result-text">Sentiment: </p>
+
     </div>
+    <div id="progress-container">
+        <svg id="progress-circle" width="150" height="150" viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg">
+            <!-- Background Circle (represents the empty tube) -->
+            <circle class="circle-background" cx="75" cy="75" r="70"></circle>
+
+            <!-- Progress Circle (represents the filling liquid) -->
+            <circle class="circle-progress" cx="75" cy="75" r="70"></circle>
+        </svg>
+        <!-- Centered Percentage Text -->
+        <span id="progress-text">0%</span>
+    </div>
+</div>
+
     <script src="/static/js/script.js"></script>
 </body>
 </html>

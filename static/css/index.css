@@ -45,6 +45,7 @@ body {
     padding-bottom: 40px;
     border-radius: 15px;
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5); /* Soft shadow for container */
+    
 }
 
 /* Title Styling */
@@ -67,6 +68,15 @@ body {
 }
 
 /* Button Styling */
+/* Container for buttons to align them side by side */
+.button-container {
+    display: flex;
+    justify-content: center;  /* Centers the buttons horizontally */
+    gap: 10px;  /* Adds space between the buttons */
+    margin-top: 20px;
+}
+
+/* Common styling for both buttons */
 .btn {
     background-color: #28a745;
     color: white;
@@ -75,7 +85,41 @@ body {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    position: relative;
+}
+
+/* Hover effect for buttons */
+.btn:hover {
+    background-color: #218838;
+}
+
+/* Styling for the refresh button */
+.refresh-btn {
+    background-color: #007bff;  /* Blue color for refresh */
+    display: flex;
+    align-items: center;
+    gap: 5px;  /* Space between the icon and text */
+}
+
+/* Refresh button icon styling */
+.refresh-btn i {
+    font-size: 18px;  /* Icon size */
+}
+
+/* Styling the spinner inside the Analyze button */
+#loader {
+    display: none;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #28a745;
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+    animation: spin 1s linear infinite;
+}
+
+/* Spinner animation */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 /* Spinner Styling (for loading animation) */
@@ -106,4 +150,66 @@ body {
     font-weight: bold;
     color: white;
 }
+/* Style for the progress meter */
+/* Outer container to hold both elements side by side */
+.outer-container {
+    display: flex;
+    justify-content: center;  /* Center the analysis container */
+    align-items: center;
+    margin-top: 50px;
+    position: relative;
+}
 
+/* The analysis container stays centered */
+.analysis-container {
+    width: 60%;  /* Adjust the width as needed */
+    text-align: center;
+    margin-right: 30px;  /* Space between the analysis and progress meter */
+    position: relative;
+}
+
+/* The circular progress meter container (right side) */
+#progress-container {
+    position: absolute;
+    top: 10%;  /* Position it on the top-right corner */
+    right: 5%;
+    width: 150px;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+     margin-right: 40px;
+     margin-top: 50px;
+}
+
+/* Circle Progress Styling */
+#progress-circle {
+    transform: rotate(-90deg); /* Rotate to start progress from the top */
+}
+
+.circle-background {
+    fill: none;
+    stroke: #e0e0e0;  /* Light gray for the background of the tube */
+    stroke-width: 8;   /* Width of the background circle */
+}
+
+.circle-progress {
+    fill: none;
+    stroke: #28a745;  /* Green color for the liquid in the progress tube */
+    stroke-width: 8;   /* Width of the progress circle */
+    stroke-linecap: round;
+    stroke-dasharray: 440; /* Circumference of the circle */
+    stroke-dashoffset: 440; /* Start with no progress (full circle) */
+    transition: stroke-dashoffset 2s ease;  /* Smooth transition for filling effect */
+}
+
+#progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    color: #28a745;
+    font-size: 20px;
+    font-weight: bold;
+    transform: translate(-50%, -50%);
+}

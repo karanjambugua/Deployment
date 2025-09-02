@@ -103,3 +103,7 @@ header nav ul li a {
         grid-template-columns: 1fr;
     }
 }
+.logo img {
+    width: 80px;  /* Adjust the width as needed */
+    height: auto;  /* Maintain aspect ratio */
+}

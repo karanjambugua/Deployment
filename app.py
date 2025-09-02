@@ -10,6 +10,7 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 import nltk
 import chardet
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 # Ensure NLTK resources are available
 nltk.download('punkt')
@@ -17,10 +18,22 @@ nltk.download('stopwords')
 nltk.download('punkt')
 nltk.download('stopwords')
 nltk.download('punkt_tab') 
+nltk.download('vader_lexicon')
 app = Flask(__name__)
 
+
+# Initialize VADER sentiment analyzer
+analyzer = SentimentIntensityAnalyzer()
 # Load the stopwords for text cleaning
 stop_words = set(stopwords.words('english'))
+# Handle negations in preprocessing
+def handle_negations(text):
+    # Replace negation words with '_not_' to better capture the sentiment
+    negations = ["don't", "doesn't", "can't", "isn't", "aren't", "won't", "didn't", "hasn't", "haven't"]
+    for neg in negations:
+        if neg in text.lower():
+            text = text.replace(neg, "not_{}".format(neg))  # Replace with a special marker
+    return text
 
 # Define function to preprocess tweet text
 def preprocess_text(text):
@@ -28,10 +41,14 @@ def preprocess_text(text):
     if not isinstance(text, str):
         return ''
     
+    # Handle negations first (before other preprocessing steps)
+    text = handle_negations(text)
+
     # Basic text preprocessing: remove non-alphabetic characters and stopwords
     text = ' '.join([word for word in word_tokenize(text.lower()) if word.isalpha() and word not in stop_words])
     
     return text
+
 
 # Define and train Logistic Regression model
 def train_logistic_regression_model():
@@ -65,6 +82,20 @@ train_logistic_regression_model()
 
 # Load the trained model when the app starts
 model = joblib.load('sentiment_model.pkl')
+# Load the Logistic Regression model (only once during app initialization)
+def load_logistic_regression_model():
+    # Load your pre-trained Logistic Regression model here
+    model = joblib.load('sentiment_model.pkl')
+    return model
+
+logistic_model = load_logistic_regression_model()
+
+# Define function for Logistic Regression prediction
+def logistic_regression_predict(text):
+    preprocessed_text = preprocess_text(text)
+    sentiment = logistic_model.predict([preprocessed_text])[0]
+    return sentiment
+
 
 # Home route: Renders the index.html page
 @app.route('/')
@@ -74,21 +105,32 @@ def home():
 @app.route('/team')
 def team():
     return render_template('team.html')
-
 # Sentiment analysis route: Accepts tweet input and returns sentiment
 @app.route('/analyze', methods=['POST'])
 def analyze():
-    data = request.get_json()
-    tweet = data.get("tweet")
+    data = request.get_json()  # Get JSON data from the frontend
+    tweet = data.get("tweet")  # Extract tweet text
     
     if not tweet:
         return jsonify({"error": "No tweet provided"}), 400
 
-    # Preprocess and predict sentiment using the Logistic Regression model
+    # Preprocess tweet text before analysis
     preprocessed_tweet = preprocess_text(tweet)
-    sentiment = model.predict([preprocessed_tweet])[0]
 
-    return jsonify({"sentiment": sentiment})
+    # Analyze the sentiment using VADER
+    sentiment_score = analyzer.polarity_scores(preprocessed_tweet)
+    compound_score = sentiment_score['compound']  # Get the compound score (ranges from -1 to 1)
+
+    # Determine sentiment based on the compound score
+    if compound_score >= 0.05:
+        sentiment = 'Positive emotion'
+    elif compound_score <= -0.05:
+        sentiment = 'Negative emotion'
+    else:
+        sentiment = 'Neutral emotion'
+
+    # Return sentiment result
+    return jsonify({"sentiment": sentiment, "score": sentiment_score})
 
 # Detect file encoding (optional, for debugging purposes)
 with open('Data/judge-1377884607_tweet_product_company.csv', 'rb') as f:
